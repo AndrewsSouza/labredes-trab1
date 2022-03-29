@@ -1,8 +1,13 @@
 package com.company;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 public class UDPServer {
     public static void run() throws Exception {
@@ -19,11 +24,14 @@ public class UDPServer {
 
             // pega os dados, o endere�o IP e a porta do cliente
             // para poder mandar a msg de volta
-            String sentence = new String(receivePacket.getData());
+            String sentence = new String(receivePacket.getData(), StandardCharsets.UTF_8);
             InetAddress IPAddress = receivePacket.getAddress();
             int port = receivePacket.getPort();
 
-            System.out.println("Mensagem recebida: " + sentence);
+            File outputFile = new File("outputFile.txt");
+            try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+                outputStream.write(receiveData);
+            }
         }
     }
 }

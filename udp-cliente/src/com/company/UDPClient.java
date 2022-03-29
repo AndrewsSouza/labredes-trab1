@@ -11,11 +11,11 @@ class UDPClient {
     public static void run() throws Exception {
         FileInputStream inputStream = null;
         try {
-            File file = new File("file1.txt");
+            File file = new File("exemplo-pequeno.txt");
             inputStream = new FileInputStream(file);
             DatagramSocket clientSocket = new DatagramSocket();
 
-            InetAddress IPAddress = InetAddress.getByName("10.32.143.12");
+            InetAddress IPAddress = InetAddress.getByName("localhost");
 
             byte[] sentence = inputStream.readAllBytes();
             DatagramPacket sendPacket = new DatagramPacket(sentence, sentence.length, IPAddress, 9876);
