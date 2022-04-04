@@ -1,27 +1,38 @@
 package com.company;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 
 public class TCPClient {
-    public static void run() throws Exception{
-        //Initialize socket
-        Socket socket = new Socket(InetAddress.getByName("10.32.143.130"), 5000);
-        byte[] contents = new byte[10000];
-        //Initialize the FileOutputStream to the output file's full path.
-        FileOutputStream fos = new FileOutputStream("./texto.txt");
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
-        InputStream is = socket.getInputStream();
-        //No of bytes read in one read() call
-        int bytesRead = 0;
-        while((bytesRead=is.read(contents))!=-1)
-            bos.write(contents, 0, bytesRead);
-        bos.flush();
+    public static void run() throws Exception {
+        InetAddress inetAddress = InetAddress.getByName("localhost");
+        Socket socket = new Socket(inetAddress, 9876);
+
+        File file = new File("/home/arthur/Desktop/@pucrs/lab_redes/trabalhos/labredes-trab1/tcp-cliente/exemplo-grande.txt");
+        FileInputStream inputStream = new FileInputStream(file);
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+
+        OutputStream outputStream = socket.getOutputStream();
+        byte[] conteudo;
+        long tamanhoArquivo = file.length();
+        long count = 0;
+        while (count != tamanhoArquivo) {
+            int tamanhoArray = 10000;
+            if (tamanhoArquivo - count >= tamanhoArray) {
+                count += tamanhoArray;
+            } else {
+                tamanhoArray = (int) (tamanhoArquivo - count);
+                count = tamanhoArquivo;
+            }
+            conteudo = new byte[tamanhoArray];
+            bufferedInputStream.read(conteudo, 0, tamanhoArray);
+            outputStream.write(conteudo);
+            System.out.println("Enviando arquivo... " + (count * 100) / tamanhoArquivo + "%");
+        }
+        outputStream.flush();
         socket.close();
-        System.out.println("File saved successfully!");
+        System.out.println("Arquivo enviado com sucesso");
     }
 
 }
